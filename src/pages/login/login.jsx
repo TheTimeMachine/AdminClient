@@ -9,7 +9,22 @@ const onFinish = values => {
   console.log('Received values of form: ', values);
 } 
 
-export default class Login extends Component {   
+export default class Login extends Component {
+
+  validatePwd = (rule, value) => {
+    value = value.trim()
+    if (!value) {
+      return Promise.reject('请输入密码!');
+    } else if (value.length<4) {
+      return Promise.reject('密码不能小于4位!');
+    } else if (value.length>12) {
+      return Promise.reject('密码不能大于12位');
+    } else if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+      return Promise.reject('必须由英文、数字或下划线组成!');
+    }
+    return Promise.resolve();
+  }
+
   render() {
     return (
       <div className="login">
@@ -32,8 +47,21 @@ export default class Login extends Component {
         rules={[
           {
             required: true,
-            message: '请输入用户名!',
+            whitespace: true,
+            message: '请输入用户名!'
           },
+          {
+            min: 4,
+            message: '用户名不能小于4位!'
+          },
+          {
+            max: 12,
+            message: '用户名不能大于12位!'
+          },
+          {
+            pattern: /^[a-zA-Z0-9_]+$/,
+            message: '用户名必须由英文、数字或下划线组成!'
+          }
         ]}
       >
         <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="用户名" />
@@ -42,9 +70,8 @@ export default class Login extends Component {
         name="password"
         rules={[
           {
-            required: true,
-            message: '请输入密码!',
-          },
+            validator: this.validatePwd
+          }
         ]}
       >
         <Input
