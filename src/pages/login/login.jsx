@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
-import { Form, Input, Button } from 'antd';
+import { Redirect } from 'react-router-dom'
+import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
+import { reqLogin } from '../../api'
 import './login.less'
 import logo from './images/logo.png'
-
-const onFinish = values => {
-  console.log('Received values of form: ', values);
-} 
 
 export default class Login extends Component {
 
@@ -26,6 +24,24 @@ export default class Login extends Component {
   }
 
   render() {
+    const user = JSON.parse(localStorage.getItem('user_key') || '{}')
+    if (user._id) {
+      return <Redirect to='/'/>
+    }
+
+    const onFinish = (async({username,password}) => {
+      reqLogin(username,password)
+      const result = await reqLogin(username,password)
+      if (result.status === 0) {
+        const user = result.data
+        localStorage.setItem('user_key',JSON.stringify(user))
+        message.success('登陆成功')
+        this.props.history.replace('/')
+      } else {
+        message.error(result.msg)
+      }
+    }) 
+
     return (
       <div className="login">
         <div className="login-header">
@@ -39,6 +55,8 @@ export default class Login extends Component {
       className="login-form"
       initialValues={{
         remember: true,
+        username: '',
+        password: ''
       }}
       onFinish={onFinish}
     >
