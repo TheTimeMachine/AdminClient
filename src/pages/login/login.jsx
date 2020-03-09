@@ -6,6 +6,8 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { reqLogin } from '../../api'
 import './login.less'
 import logo from './images/logo.png'
+import storageUtils from '../../utils/storageUtils'
+import memoryUtils from '../../utils/memoryUtils'
 
 export default class Login extends Component {
 
@@ -24,7 +26,7 @@ export default class Login extends Component {
   }
 
   render() {
-    const user = JSON.parse(localStorage.getItem('user_key') || '{}')
+    const user = memoryUtils.user
     if (user._id) {
       return <Redirect to='/'/>
     }
@@ -34,7 +36,8 @@ export default class Login extends Component {
       const result = await reqLogin(username,password)
       if (result.status === 0) {
         const user = result.data
-        localStorage.setItem('user_key',JSON.stringify(user))
+        storageUtils.saveUser(user)
+        memoryUtils.user = user
         message.success('登陆成功')
         this.props.history.replace('/')
       } else {
