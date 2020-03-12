@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom'
-import { Form, Input, Button, message } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Form, Input, Button, message, Icon } from 'antd';
 
-import { reqLogin } from '../../api'
+import request from '../../api/index'
 import './login.less'
-import logo from './images/logo.png'
+import logo from '../../assets/images/logo.png';
+import memoryUtils from '../../utils/memoryUtils';
+import storageUtils from '../../utils/storageUtils';
 
 export default class Login extends Component {
 
@@ -24,22 +25,30 @@ export default class Login extends Component {
   }
 
   render() {
-    const user = JSON.parse(localStorage.getItem('user_key') || '{}')
+    const user = memoryUtils.user
     if (user._id) {
       return <Redirect to='/'/>
     }
 
-    const onFinish = (async({username,password}) => {
-      reqLogin(username,password)
-      const result = await reqLogin(username,password)
-      if (result.status === 0) {
-        const user = result.data
-        localStorage.setItem('user_key',JSON.stringify(user))
-        message.success('登陆成功')
-        this.props.history.replace('/')
-      } else {
-        message.error(result.msg)
-      }
+    const onFinish = (async(values) => {
+      var action = 'userInfo';
+      var type = "loginBackStatge";
+      var params = {
+        ...values, action, type
+      };
+      request('/api/' + params.action, {
+        method: 'POST',
+        data: params
+      }).then(res => {
+        console.log(res)
+        if (res && res.userInfo && res.userInfo.loginSequence) {
+            const user = res.userInfo
+            storageUtils.saveUser(user)
+            memoryUtils.user = user
+            this.props.history.replace('/')
+            message.success('登陆成功')
+        }
+      })
     }) 
 
     return (
@@ -55,13 +64,13 @@ export default class Login extends Component {
       className="login-form"
       initialValues={{
         remember: true,
-        username: '',
+        mail: '',
         password: ''
       }}
       onFinish={onFinish}
     >
       <Form.Item
-        name="username"
+        name="mail"
         rules={[
           {
             required: true,
@@ -71,18 +80,10 @@ export default class Login extends Component {
           {
             min: 4,
             message: '用户名不能小于4位!'
-          },
-          {
-            max: 12,
-            message: '用户名不能大于12位!'
-          },
-          {
-            pattern: /^[a-zA-Z0-9_]+$/,
-            message: '用户名必须由英文、数字或下划线组成!'
           }
         ]}
       >
-        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="用户名" />
+        <Input prefix={<Icon type="user" className="site-form-item-icon" />} placeholder="用户名" />
       </Form.Item>
       <Form.Item
         name="password"
@@ -93,7 +94,7 @@ export default class Login extends Component {
         ]}
       >
         <Input
-          prefix={<LockOutlined className="site-form-item-icon" />}
+          prefix={<Icon type="lock" className="site-form-item-icon" />}
           type="password"
           placeholder="密码"
         />

@@ -8,7 +8,7 @@ import {message} from "antd"
 //添加请求拦截器
 axios.interceptors.request.use(function (config) {
   const {method,data} = config
-  if(method.toLowerCase()==='post'&&typeof data==='object') {
+  if(method==='POST'&&typeof data==='object') {
     config.data = qs.stringify(data)
   }
   return config;
