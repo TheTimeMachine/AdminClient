@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './index.less'
+<<<<<<< HEAD
 import { Link } from 'react-router-dom'
 import logo from '../../assets/images/logo.png'
 import { Menu, Icon } from 'antd'
@@ -102,4 +103,15 @@ export default class LeftNav extends Component {
             </div>
         )
     }
+=======
+
+export default class LeftNav extends Component {
+  render() {
+    return (
+      <div className="left-nav">
+        LeftNav
+      </div>
+    )
+  }
+>>>>>>> f8f414d2f5c72d5afe6fbcf11ef605c8f1d55752
 }

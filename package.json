@@ -17,8 +17,12 @@
         "react-dom": "^16.13.0",
         "react-router-dom": "^5.1.2",
         "react-scripts": "3.4.0",
+<<<<<<< HEAD
         "store": "^2.0.12",
         "umi-request": "^1.2.19"
+=======
+        "store": "^2.0.12"
+>>>>>>> f8f414d2f5c72d5afe6fbcf11ef605c8f1d55752
     },
     "scripts": {
         "start": "react-app-rewired start",

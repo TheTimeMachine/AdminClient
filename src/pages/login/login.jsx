@@ -4,9 +4,15 @@ import { Form, Input, Button, message, Icon } from 'antd';
 
 import request from '../../api/index'
 import './login.less'
+<<<<<<< HEAD
 import logo from '../../assets/images/logo.png';
 import memoryUtils from '../../utils/memoryUtils';
 import storageUtils from '../../utils/storageUtils';
+=======
+import logo from './images/logo.png'
+import storageUtils from '../../utils/storageUtils'
+import memoryUtils from '../../utils/memoryUtils'
+>>>>>>> f8f414d2f5c72d5afe6fbcf11ef605c8f1d55752
 
 export default class Login extends Component {
 
@@ -30,6 +36,7 @@ export default class Login extends Component {
       return <Redirect to='/'/>
     }
 
+<<<<<<< HEAD
     const onFinish = (async(values) => {
       var action = 'userInfo';
       var type = "loginBackStatge";
@@ -49,6 +56,20 @@ export default class Login extends Component {
             message.success('登陆成功')
         }
       })
+=======
+    const onFinish = (async({username,password}) => {
+      reqLogin(username,password)
+      const result = await reqLogin(username,password)
+      if (result.status === 0) {
+        const user = result.data
+        storageUtils.saveUser(user)
+        memoryUtils.user = user
+        message.success('登陆成功')
+        this.props.history.replace('/')
+      } else {
+        message.error(result.msg)
+      }
+>>>>>>> f8f414d2f5c72d5afe6fbcf11ef605c8f1d55752
     }) 
 
     return (
