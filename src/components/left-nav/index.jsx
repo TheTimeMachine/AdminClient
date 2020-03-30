@@ -1,105 +1,103 @@
 import React, { Component } from 'react'
 import './index.less'
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 import logo from '../../assets/images/logo.png'
-import { Menu, Icon } from 'antd'
-
-import menuList from '../../config/menuConfig'
+import { Menu } from 'antd'
+import {
+  HomeOutlined,
+  AppstoreOutlined,
+  BarsOutlined,
+  ToolOutlined,
+  UserOutlined,
+  UserSwitchOutlined,
+  AreaChartOutlined,
+  BarChartOutlined,
+  LineChartOutlined,
+  PieChartOutlined
+} from '@ant-design/icons';
 
 const { SubMenu } = Menu
 // 左侧导航组件
-export default class LeftNav extends Component {
-    // 根据指定menu数据生成<MenuItem>和<SubMenu>的数组
-    getMenuNodes = (menuList) => {
-        return menuList.map(item => {
-            if(!item.children) {
-                return (
-                    <Menu.Item key={item.key}>
-          <Link to={item.key}>
-          </Link>
-          <Icon type={item.icon} />
-            <span>{item.title}</span>
-          </Menu.Item>
-                )
-            }
-            return (
-                <SubMenu
-            key="sub1"
-            title={
-              <span>
-              <Icon type={item.icon} />
-                <span>商品</span>
-              </span>
-            }
-          ></SubMenu>
-            )
-        })
+class LeftNav extends Component {
+  render() {
+
+    //得到当前请求的路由路径
+    const selectKey = this.props.location.pathname;
+    const menuItemArray = ['/category', '/product', '/charts/bar', '/charts/line', '/charts/pie'];
+    const cItem = menuItemArray.find(cItem => cItem === selectKey);
+    var openKey = '';
+    if (cItem) {
+      if (cItem.indexOf('/category') || cItem.indexOf('/product')) {
+        openKey = '/products';
+      } else {
+        openKey = '/charts';
+      }
     }
+    return (
+      <div className="left-nav">
+        <Link to="home" className="left-nav-link">
+          <img src={logo} alt="" />
+          <h1>硅谷后台</h1>
+        </Link>
 
-    state = {
-        collapsed: false,
-      };
-
-      toggleCollapsed = () => {
-        this.setState({
-          collapsed: !this.state.collapsed,
-        });
-      };
-
-    render() {
-        return (
-            <div className="left-nav">
-                <Link to="home" className="left-nav-link">
-                <img src={logo} alt="" />
-                <h1>硅谷后台</h1>
-                </Link>
-
-                <Menu
-          defaultSelectedKeys={['/home']}
-          defaultOpenKeys={['sub1']}
+        <Menu
+          defaultSelectedKeys={[selectKey]}
+          defaultOpenKeys={[openKey]}
           mode="inline"
           theme="dark"
-          inlineCollapsed={this.state.collapsed}
         >
-        {
-            this.getMenuNodes(menuList)
-        }
-          {/* <Menu.Item key="/home">
-          <Link to="/home">
-          </Link>
-            <PieChartOutlined />
+          <Menu.Item key="/home">
+            <Link to="/home">
+            </Link>
+            <HomeOutlined />
             <span>首页</span>
           </Menu.Item>
           <SubMenu
-            key="sub1"
+            key="/products"
             title={
               <span>
-                <MailOutlined />
+                <AppstoreOutlined />
                 <span>商品</span>
               </span>
             }
           >
-            <Menu.Item key="5">品类管理</Menu.Item>
-            <Menu.Item key="6">商品管理</Menu.Item>
+            <Menu.Item key="/category"><Link to="/category">
+            </Link><BarsOutlined />品类管理</Menu.Item>
+            <Menu.Item key="/product"><Link to="/product">
+            </Link><ToolOutlined />商品管理</Menu.Item>
           </SubMenu>
+          <Menu.Item key="/user">
+            <Link to="/user">
+            </Link>
+            <UserOutlined />
+            <span>用户管理</span>
+          </Menu.Item>
+          <Menu.Item key="/role">
+            <Link to="/role">
+            </Link>
+            <UserSwitchOutlined />
+            <span>角色管理</span>
+          </Menu.Item>
           <SubMenu
-            key="sub2"
+            key="/charts"
             title={
               <span>
-                <AppstoreOutlined />
-                <span>Navigation Two</span>
+                <AreaChartOutlined />
+                <span>图形图表</span>
               </span>
             }
           >
-            <Menu.Item key="9">Option 9</Menu.Item>
-            <Menu.Item key="10">Option 10</Menu.Item>
-            <SubMenu key="sub3" title="Submenu">
-              <Menu.Item key="11">Option 11</Menu.Item>
-              <Menu.Item key="12">Option 12</Menu.Item>
-            </SubMenu>
-          </SubMenu> */}
+            <Menu.Item key="/charts/bar"><Link to="/charts/bar">
+            </Link><BarChartOutlined />柱形图</Menu.Item>
+            <Menu.Item key="/charts/line"><Link to="/charts/line">
+            </Link><LineChartOutlined />折线图</Menu.Item>
+            <Menu.Item key="/charts/pie"><Link to="/charts/pie">
+            </Link><PieChartOutlined />饼图</Menu.Item>
+          </SubMenu>
         </Menu>
-            </div>
-        )
-    }
+      </div>
+    )
+  }
 }
+
+export default withRouter(LeftNav)

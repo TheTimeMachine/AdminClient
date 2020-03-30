@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom'
-import { Form, Input, Button, message, Icon } from 'antd';
+import { Form, Input, Button, message } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 import request from '../../api/index'
 import './login.less'
@@ -83,7 +84,7 @@ export default class Login extends Component {
           }
         ]}
       >
-        <Input prefix={<Icon type="user" className="site-form-item-icon" />} placeholder="用户名" />
+        <Input prefix={<UserOutlined type="user" className="site-form-item-icon" />} placeholder="用户名" />
       </Form.Item>
       <Form.Item
         name="password"
@@ -94,7 +95,7 @@ export default class Login extends Component {
         ]}
       >
         <Input
-          prefix={<Icon type="lock" className="site-form-item-icon" />}
+          prefix={<LockOutlined type="lock" className="site-form-item-icon" />}
           type="password"
           placeholder="密码"
         />
