@@ -22,12 +22,15 @@ class LeftNav extends Component {
   render() {
 
     //得到当前请求的路由路径
-    const selectKey = this.props.location.pathname;
+    let selectKey = this.props.location.pathname;
+    if(selectKey === '/') {
+      selectKey = '/home'
+    }
     const menuItemArray = ['/category', '/product', '/charts/bar', '/charts/line', '/charts/pie'];
     const cItem = menuItemArray.find(cItem => cItem === selectKey);
     var openKey = '';
     if (cItem) {
-      if (cItem.indexOf('/category') || cItem.indexOf('/product')) {
+      if (cItem.indexOf('/category') >= 0 || cItem.indexOf('/product') >= 0) {
         openKey = '/products';
       } else {
         openKey = '/charts';
