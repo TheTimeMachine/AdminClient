@@ -1,20 +1,24 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import memoryUtils from '../../utils/memoryUtils'
-import { Modal, Button } from 'antd'
+import { Modal } from 'antd'
 import menuList from '../../config/menuConfig'
 import {formateDate} from '../../utils/dateUtils'
+import {reqWeather} from '../../api'
 import {
     ExclamationCircleOutlined
 } from '@ant-design/icons'
 
 import './index.less'
 import storageUtils from '../../utils/storageUtils';
+import LinkButton from '../link-button'
 
 class Header extends Component {
 
     state = {
-        currentTime: formateDate(Date.now())
+        currentTime: formateDate(Date.now()),
+        dayPictureUrl: '', //图片url
+        weather: '' //天气文本
     }
     //退出登录
     logout = () => {
@@ -57,14 +61,27 @@ class Header extends Component {
 
         return title
     }
+//获取天气信息显示
+    getWeather = async () => {
+        //发请求
+       const {dayPictureUrl, weather} = await reqWeather('上海')
+        //更新状态
+        this.setState({
+            dayPictureUrl,
+            weather
+        })
+    }
 
     componentDidMount () {
         //启动循环定时器
         this.intervalId = setInterval(() => {
+            //将currentTime更新为当前时间
             this.setState({
                 currentTime: formateDate(Date.now())
             })
         }, 1000);
+        //发jsonp请求获取天气信息显示
+        this.getWeather()
     }
 
     componentWillUnmount () {
@@ -74,7 +91,7 @@ class Header extends Component {
 
     render() {
 
-        const { currentTime } = this.state
+        const { currentTime, dayPictureUrl, weather } = this.state
         const user = memoryUtils.user
         //得到当前需要显示的title
         const title = this.getTitle()
@@ -82,14 +99,16 @@ class Header extends Component {
             <div className="header">
                 <div className="header-top">
                     欢迎，{user.mail} &nbsp;&nbsp;
-                    <Button type="link" onClick={this.logout}>退出</Button>
+
+                    {/*组件的标签作为标签的children属性传入*/}
+                    <LinkButton onClick={this.logout}>退出</LinkButton>
                 </div>
                 <div className="header-bottom">
                     <div className="header-bottom-left">{title}</div>
                     <div className="header-bottom-right">
                         <span>{currentTime}</span>
-                        <img src="http://api.map.baidu.com/images/weather/day/duoyun.png" alt="weather" />
-                        <span>晴</span>
+                        <img src={dayPictureUrl} alt="weather" />
+                        <span>{weather}</span>
                     </div>
                 </div>
             </div>

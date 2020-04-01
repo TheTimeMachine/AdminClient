@@ -1,6 +1,11 @@
 // 包含应用中所有请求接口的函数：接口函数
-// import ajax from "./ajax"
+//函数的返回值都是promise对象
+import ajax from "./ajax"
+import { extend } from 'umi-request';
+import { notification,message } from 'antd';
+import jsonp from 'jsonp' //axios不能发jsonp请求
 
+const BASE = ''
 
 // //请求登陆
 // export function reqLogin(username,password) {
@@ -21,12 +26,34 @@
 //   console.log('请求成功了',result)
 // })
 
+//发送jsonp请求得到天气信息
+export const reqWeather = (city) => {
+
+  return new Promise((resolve, reject) => {   //执行器函数：内部去执行异步任务，成功了调用resolve(),失败了不调用reject()，直接提示错误
+    const url = `http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`
+    jsonp(url, {}, (error,data) => {
+      if(!error && data.error === 0) { //成功的
+        const {dayPictureUrl, weather} = data.results[0].weather_data[0]
+        resolve({dayPictureUrl, weather})
+      } else { //失败的
+        message.error('获取天气信息失败')
+      }
+    })
+  })
+  
+}
+
+
+//获取分类列表
+// export const reqCategorys = () => ajax.get(BASE + '/manage/category/list')
+// export const reqCategorys = () => ajax({
+//   url: BASE + '/manage/category/list'
+// })
+export const reqCategorys = () => ajax(BASE + '/manage/category/list')
 /**
  * request 网络请求工具
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
-import { extend } from 'umi-request';
-import { notification } from 'antd';
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
@@ -71,9 +98,8 @@ const errorHandler = error => {
  * 配置request请求时的默认参数
  */
 
-const request = extend({
+export const request = extend({
   errorHandler,
   // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
 });
-export default request;
